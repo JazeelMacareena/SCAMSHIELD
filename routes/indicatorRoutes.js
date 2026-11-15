@@ -11,11 +11,15 @@ const {
 } = require("../controllers/indicatorController");
 
 const requireSignin = require("../middleware/requireSignin");
+const requireRole = require("../middleware/requireRole");
 
-router.post("/", requireSignin, createIndicator);
+// Anyone can read
 router.get("/", getIndicators);
 router.get("/:id", getIndicatorById);
-router.put("/:id", requireSignin, updateIndicator);
-router.delete("/:id", requireSignin, deleteIndicator);
+
+// Only admins can write
+router.post("/", requireSignin, requireRole("admin"), createIndicator);
+router.put("/:id", requireSignin, requireRole("admin"), updateIndicator);
+router.delete("/:id", requireSignin, requireRole("admin"), deleteIndicator);
 
 module.exports = router;
