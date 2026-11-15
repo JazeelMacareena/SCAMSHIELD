@@ -33,4 +33,7 @@ const indicatorSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+// The same kind + value cannot be added twice
+indicatorSchema.index({ kind: 1, value: 1 }, { unique: true });
+
 module.exports = mongoose.model("Indicator", indicatorSchema);

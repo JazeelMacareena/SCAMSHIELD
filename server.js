@@ -12,6 +12,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const indicatorRoutes = require("./routes/indicatorRoutes");
 const moderationRoutes = require("./routes/moderationRoutes");
+const verifyRoutes = require("./routes/verifyRoutes");
 
 
 // Initialize Express
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/indicators", indicatorRoutes);
+app.use("/api/verify", verifyRoutes);
 app.use("/api/moderation", moderationRoutes);
 
 // Report routes
