@@ -1,4 +1,3 @@
-
 const Report = require("../models/Report");
 
 // Create a report
@@ -26,10 +25,21 @@ const createReport = async (req, res) => {
     }
 };
 
-// Get all reports with search and filtering
+// Get all reports with search, filtering, and pagination
 const getReports = async (req, res) => {
     try {
         const { q, type, status } = req.query;
+
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = 10;
+
+        if (page < 1 || !Number.isInteger(page)) {
+            return res.status(400).json({
+                error: "Page must be at least 1"
+            });
+        }
+
+        const skip = (page - 1) * limit;
 
         const filter = {};
 
@@ -43,11 +53,23 @@ const getReports = async (req, res) => {
             ];
         }
 
+        const total = await Report.countDocuments(filter);
+
         const reports = await Report.find(filter)
             .populate("reportedBy", "name")
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
-        res.json(reports);
+        res.json({
+            reports,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
